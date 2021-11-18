@@ -12,6 +12,16 @@ router.post("/", async (req, res) => {
     }
 });
 
+// delete category
+router.delete("/:id", async (req, res) => {
+    try {   
+        await Category.findByIdAndDelete(req.params.id);
+        res.status(200).json("Category has been deleted.");
+    } catch (err) {
+        res.status(500).json(err);
+    }     
+});
+
 // get all categories
 router.get("/", async (req, res) => {
     try {

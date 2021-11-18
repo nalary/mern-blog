@@ -65,7 +65,8 @@ export default function Write() {
                         placeholder="Title" 
                         className="writeInput" 
                         autoFocus
-                        onChange={e => setTitle(e.target.value)}
+                        required
+                        onChange={e => setTitle(e.target.value)}                        
                     />
                     <input 
                         type="text" 
@@ -79,7 +80,8 @@ export default function Write() {
                     <textarea 
                         placeholder="Tell your story..." 
                         type="text" 
-                        className="writeInput writeText" 
+                        className="writeInput writeText"
+                        required
                         onChange={e => setDesc(e.target.value)}
                     />
                 </div>
