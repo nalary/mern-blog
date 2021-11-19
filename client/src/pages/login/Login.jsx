@@ -20,7 +20,7 @@ export default function Login() {
             });
             dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
         } catch (err) {
-            dispatch({ type: "LOGIN_FAILURE" });
+            dispatch({ type: "LOGIN_FAILURE", payload: err });
         }
     };
 

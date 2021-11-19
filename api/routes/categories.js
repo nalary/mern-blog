@@ -3,12 +3,18 @@ const Category = require("../models/Category");
 
 // create category
 router.post("/", async (req, res) => {
-    const newCat = new Category(req.body);
-    try {
-        const savedCat = await newCat.save();
-        res.status(200).json(savedCat);
-    } catch (err) {
-        res.status(500).json(err);
+    const allCats = await Category.find();
+    const newCat = new Category(req.body); 
+        
+    if (!allCats.some(cat => cat.name == newCat.name)) {             
+        try {
+            const savedCat = await newCat.save();
+            res.status(200).json(savedCat);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(200).json("This is already in category.");
     }
 });
 

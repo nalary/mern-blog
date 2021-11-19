@@ -1,8 +1,10 @@
-import axios from "axios";
 import { useContext, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { Context } from "../../context/Context";
 import "./settings.css";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import app from "../../firebase";
+import { updateCall } from "../../apiCalls";
 
 export default function Settings() {
     const { user, dispatch } = useContext(Context);
@@ -13,11 +15,8 @@ export default function Settings() {
     const [file, setFile] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    const PF = "http://localhost:5000/images/";
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch({ type: "UPDATE_START" });
         
         const updatedUser = {
             username,
@@ -27,39 +26,56 @@ export default function Settings() {
         };
 
         if (file) {
-            const data = new FormData();
-            const fileName = Date.now() + "_" + file.name;
+            const fileName = file.name + "_" + Date.now();
+            const storage = getStorage(app);
+            const storageRef = ref(storage, fileName);
+            const uploadTask = uploadBytesResumable(storageRef, file);
 
-            data.append("name", fileName);
-            data.append("file", file);
-            updatedUser.profilePic = fileName;
-
-            try {
-                await axios.post("/upload", data);
-            } catch (err) { }
-        }
-
-        try {
-            const res = await axios.put(`/users/${user._id}`, updatedUser);
-            dispatch({ type: "UPDATE_SUCCESS", payload: res.data });
+            uploadTask.on('state_changed', 
+                (snapshot) => {                    
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                    default:
+                        break;
+                    }
+                }, 
+                (error) => {
+                    console.log(error);
+                }, 
+                () => {                    
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {                    
+                        updatedUser.profilePic= downloadURL;
+                        updateCall(updatedUser, user._id, dispatch);
+                        setSuccess(true);
+                    });
+                }
+            );
+            
+        } else {
+            updateCall(updatedUser, dispatch);
             setSuccess(true);
-        } catch (err) { 
-            dispatch({ type: "UPDATE_FAILURE" });
-        }        
+        }    
     };
 
     return (
         <div className="settings">
             <div className="settingsWrapper">
                 <div className="settingsTitle">
-                    <span className="settingsUpdateTitle">Update Your Acoount</span>
-                    <span className="settingsDeleteTitle">Delete Acoount</span>
+                    <span className="settingsUpdateTitle">Update Your Account</span>
+                    <span className="settingsDeleteTitle">Delete Account</span>
                 </div>
                 <form className="settingsForm" onSubmit={handleSubmit}>
                     <label>Profile Picture</label>
                     <div className="settingsPP">
                         <img                             
-                            src={file ? URL.createObjectURL(file) : PF + user.profilePic}
+                            src={file ? URL.createObjectURL(file) : user.profilePic ? user.profilePic : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
                             alt=""
                         />
                         <label htmlFor="fileInput">
@@ -75,7 +91,7 @@ export default function Settings() {
                     <label>Username</label>
                     <input 
                         type="text" 
-                        placeholder={user.username} 
+                        placeholder={user.username}
                         onChange={e => setUsername(e.target.value)} 
                     />
                     <label>Email</label>

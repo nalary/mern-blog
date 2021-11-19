@@ -20,15 +20,15 @@ export default function Sidebar() {
             <div className="sidebarItem">
                 <span className="sidebarTitle">ABOUT ME</span>
                 <img 
-                    src="https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/132041461_10221600439853433_725026506335259556_n.jpg?_nc_cat=108&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=l-jqxEDkAucAX8pZQjm&_nc_ht=scontent-ssn1-1.xx&oh=efcfabdb5a3088f1c718d0c52b31844e&oe=619F5141" 
+                    src="https://images.pexels.com/photos/2345293/pexels-photo-2345293.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" 
                     alt="" 
                 />
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos minus expedita unde voluptas ea a atque accusamus aspernatur
+                    You are the dancing queen. Young and sweet, only seventeen. Dancing queen. Feel the beat from the tambourine, oh yeah. You can dance, you can jive. Having the time of your life. Ooh, see that girl, watch that scene. Digging the dancing queen.
                 </p>
             </div>
             <div className="sidebarItem">
-                <span className="sidebarTitle">CATEGOREIS</span>
+                <span className="sidebarTitle">CATEGORY</span>
                 <ul className="sidebarList">
                     {categories.map(category => (
                         <Link to={`/?cat=${category.name}`} className="link" key={category._id}>

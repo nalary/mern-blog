@@ -34,7 +34,7 @@ export default function Register() {
                 <input 
                     className="registerInput" 
                     type="text" 
-                    placeholder="Enter your usename..." 
+                    placeholder="Enter your username..." 
                     onChange={e => setUsername(e.target.value)}
                 />
                 <label>Email</label>

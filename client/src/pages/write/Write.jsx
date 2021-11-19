@@ -1,7 +1,9 @@
 import { useContext, useState } from "react";
 import "./write.css";
-import axios from "axios";
 import { Context } from "../../context/Context";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import app from "../../firebase";
+import { writeCall } from "../../apiCalls";
 
 export default function Write() {
     const [title, setTitle] = useState("");
@@ -12,32 +14,57 @@ export default function Write() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const newPost = {
             title,
             desc,
             category,
             username: user.username,            
-        };
-
+        }; 
+        
         if (file) {
-            const data = new FormData();
-            const fileName = Date.now() + "_" + file.name;
-
-            data.append("name", fileName);
-            data.append("file", file);
-            newPost.photo = fileName;
-
-            try {
-                await axios.post("/upload", data);
-            } catch (err) { }
-        }
-
-        try {
-            const res = await axios.post("/posts", newPost);
-            await axios.post("/categories", { name: category });
-            window.location.replace("/posts/" + res.data._id);
-        } catch (err) { }        
+            const fileName = file.name + "_" + Date.now();
+            const storage = getStorage(app);
+            const storageRef = ref(storage, fileName);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+    
+            // Register three observers:
+            // 1. 'state_changed' observer, called any time the state changes
+            // 2. Error observer, called on failure
+            // 3. Completion observer, called on successful completion
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Observe state change events such as progress, pause, and resume
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                    default:
+                        break;
+                    }
+                }, 
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.log(error);
+                }, 
+                () => {
+                    // Handle successful uploads on complete
+                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {                    
+                        newPost.photo = downloadURL;
+                        writeCall(newPost, category.toLowerCase());
+                    });
+                }
+            );   
+        } else {
+            writeCall(newPost, category.toLowerCase());
+        }    
     };
     
     return (
@@ -57,7 +84,7 @@ export default function Write() {
                     <input 
                         type="file" 
                         id="fileInput" 
-                        style={{display: "none"}} 
+                        style={{display: "none"}}
                         onChange={e => setFile(e.target.files[0])}
                     />
                     <input 
