@@ -2,13 +2,13 @@ import "./header.css";
 
 export default function Header() {
     return (
-        <div className="headser">
+        <div className="header">
             <div className="headerTitles">
-                <span className="headerTitleSm">React & Node</span>
+                <span className="headerTitleSm">M E R N</span>
                 <span className="headerTitleLg">Blog</span>
             </div>
             <img className="headerImg" 
-                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1746&q=80" 
+                src="https://firebasestorage.googleapis.com/v0/b/mern-blog-4c8dc.appspot.com/o/blog%2Fcover.jpg?alt=media&token=d3a27039-979c-4260-b5a2-99860bfbe57d" 
                 alt="" 
             />
         </div>

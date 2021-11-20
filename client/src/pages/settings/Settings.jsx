@@ -28,7 +28,7 @@ export default function Settings() {
         if (file) {
             const fileName = file.name + "_" + Date.now();
             const storage = getStorage(app);
-            const storageRef = ref(storage, fileName);
+            const storageRef = ref(storage, `blog/${fileName}`);
             const uploadTask = uploadBytesResumable(storageRef, file);
 
             uploadTask.on('state_changed', 
@@ -75,7 +75,7 @@ export default function Settings() {
                     <label>Profile Picture</label>
                     <div className="settingsPP">
                         <img                             
-                            src={file ? URL.createObjectURL(file) : user.profilePic ? user.profilePic : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
+                            src={file ? URL.createObjectURL(file) : user.profilePic ? user.profilePic : "https://firebasestorage.googleapis.com/v0/b/mern-blog-4c8dc.appspot.com/o/blog%2FnoAavatar.png?alt=media&token=f2988122-a6f9-4cf3-95a1-1bd4b2677af7"}
                             alt=""
                         />
                         <label htmlFor="fileInput">

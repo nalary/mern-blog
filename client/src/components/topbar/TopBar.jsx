@@ -42,7 +42,7 @@ export default function TopBar() {
                     <Link to="/settings">
                         <img 
                             className="topImg"
-                            src={user.profilePic ? user.profilePic : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} 
+                            src={user.profilePic ? user.profilePic : "https://firebasestorage.googleapis.com/v0/b/mern-blog-4c8dc.appspot.com/o/blog%2FnoAavatar.png?alt=media&token=f2988122-a6f9-4cf3-95a1-1bd4b2677af7"} 
                             alt="" 
                         />
                     </Link>                    

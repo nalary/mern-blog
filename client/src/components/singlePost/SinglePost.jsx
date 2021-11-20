@@ -34,7 +34,7 @@ export default function SinglePost() {
                 desc,
                 category
             });
-            //window.location.reload("/");
+            window.location.reload("/");
             setUpdateMode(false);
         } catch (err) {}   
     };
@@ -81,9 +81,8 @@ export default function SinglePost() {
                 
                 <div className="singlePostInfo">
                     <span className="singlePostAuthor">
-                        Author _
                         <Link to={`/?user=${post.username}`} className="link"> 
-                            <b>{post.username}</b>
+                            <b>{post.username?.toUpperCase()}</b>
                         </Link>
                     </span>
                     <span className="singlePostDate">{new Date(post.updatedAt).toDateString()}</span>

@@ -13,12 +13,11 @@ export default function Post({post}) {
                 />  
             )}                      
             <div className="postInfo">
-                <div className="postCats"> 
-                    <span className="postCat">{post.category.toUpperCase()}</span>                   
-                </div>
+                
                 <Link to={`/posts/${post._id}`} className="link">
                     <span className="postTitle">{post.title}</span>
-                </Link>                
+                </Link>           
+                <span className="postCat">{post.category?.toUpperCase()}</span>     
                 <hr />
                 <span className="postDate">{new Date(post.updatedAt).toDateString()}</span>
                 <p className="postDesc">{post.desc}</p>
