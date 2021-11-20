@@ -25,7 +25,7 @@ export default function Write() {
         if (file) {
             const fileName = file.name + "_" + Date.now();
             const storage = getStorage(app);
-            const storageRef = ref(storage, fileName);
+            const storageRef = ref(storage, `blog/${fileName}`);
             const uploadTask = uploadBytesResumable(storageRef, file);
     
             // Register three observers:
