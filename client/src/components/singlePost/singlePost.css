@@ -75,6 +75,7 @@
     line-height: 25px;
     width: 70vw;
     margin-left: 20px;
+    white-space: pre-line;
 }
 
 .singlePostDesc::first-letter {
