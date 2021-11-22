@@ -1,27 +1,43 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { Context } from "../../context/Context";
 import "./settings.css";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import app from "../../firebase";
 import { updateCall } from "../../apiCalls";
+import axios from "axios";
 
 export default function Settings() {
     const { user, dispatch } = useContext(Context);
 
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    // const [username, setUsername] = useState("");
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
+    const usernameRef = useRef();
+    const emailRef = useRef();
+    const passwordRef = useRef();
     const [file, setFile] = useState(null);
     const [success, setSuccess] = useState(false);
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`/users/${user._id}`, {
+                data: {userId : user._id}
+            });
+            dispatch({ type: "LOGOUT" });
+            window.location.replace("/");
+        } catch (err) {
+            console.log(err);
+        }     
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         const updatedUser = {
-            username,
-            email,
-            password,
+            username: usernameRef.current.value,
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
             userId: user._id         
         };
 
@@ -59,7 +75,7 @@ export default function Settings() {
             );
             
         } else {
-            updateCall(updatedUser, dispatch);
+            updateCall(updatedUser, user._id, dispatch);
             setSuccess(true);
         }    
     };
@@ -69,7 +85,7 @@ export default function Settings() {
             <div className="settingsWrapper">
                 <div className="settingsTitle">
                     <span className="settingsUpdateTitle">Update Your Account</span>
-                    <span className="settingsDeleteTitle">Delete Account</span>
+                    <span className="settingsDeleteTitle" onClick={handleDelete}>Delete Account</span>
                 </div>
                 <form className="settingsForm" onSubmit={handleSubmit}>
                     <label>Profile Picture</label>
@@ -91,19 +107,25 @@ export default function Settings() {
                     <label>Username</label>
                     <input 
                         type="text" 
-                        placeholder={user.username}
-                        onChange={e => setUsername(e.target.value)} 
+                        defaultValue={user.username}
+                        // onChange={e => setUsername(e.target.value)}
+                        ref={usernameRef}
+                        required
                     />
                     <label>Email</label>
                     <input 
                         type="text" 
-                        placeholder={user.email} 
-                        onChange={e => setEmail(e.target.value)} 
+                        defaultValue={user.email} 
+                        // onChange={e => setEmail(e.target.value)} 
+                        ref={emailRef}
+                        required
                     />
                     <label>Password</label>
                     <input 
                         type="password" 
-                        onChange={e => setPassword(e.target.value)} 
+                        // onChange={e => setPassword(e.target.value)}
+                        ref={passwordRef}
+                        required
                     />
                     <button className="settingsSubmit" type="submit">Update</button>
                     {success && <span style={{ color: "teal", textAlign: "center", marginTop: "20px" }}>Profile has been updated.</span>}
